@@ -1,7 +1,7 @@
 "use client"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Zap, Brain, Sparkles } from "lucide-react"
+import { GlassMorphism } from "./glass-morphism"
+import { CinematicText } from "./cinematic-text"
 
 export type Provider = "groq" | "gemini" | "xai"
 
@@ -18,8 +18,6 @@ const providers = [
     description: "Ultra-fast inference",
     model: "Llama 3.1 8B",
     icon: Zap,
-    color: "bg-orange-500",
-    badge: "Fast",
   },
   {
     id: "gemini" as Provider,
@@ -27,8 +25,6 @@ const providers = [
     description: "Google's advanced AI",
     model: "Gemini 1.5 Flash",
     icon: Sparkles,
-    color: "bg-blue-500",
-    badge: "Smart",
   },
   {
     id: "xai" as Provider,
@@ -36,44 +32,41 @@ const providers = [
     description: "Elon's witty AI",
     model: "Grok 3",
     icon: Brain,
-    color: "bg-purple-500",
-    badge: "Witty",
   },
 ]
 
 export function ProviderSelector({ selectedProvider, onProviderChange, disabled }: ProviderSelectorProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {providers.map((provider) => {
         const Icon = provider.icon
         const isSelected = selectedProvider === provider.id
 
         return (
-          <Card
+          <GlassMorphism
             key={provider.id}
-            className={`cursor-pointer transition-all hover:shadow-md ${
-              isSelected ? "ring-2 ring-blue-500 bg-blue-50" : "hover:bg-gray-50"
+            intensity={isSelected ? "strong" : "subtle"}
+            className={`p-6 cursor-pointer transition-all duration-500 ${
+              isSelected ? "ring-1 ring-white/20" : "hover:bg-white/[0.08]"
             } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !disabled && onProviderChange(provider.id)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-lg ${provider.color} text-white`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">{provider.name}</h3>
-                    <p className="text-xs text-gray-600">{provider.model}</p>
-                  </div>
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+                  <Icon className="h-5 w-5 text-white/80" />
                 </div>
-                <Badge variant={isSelected ? "default" : "secondary"} className="text-xs">
-                  {provider.badge}
-                </Badge>
+                <div>
+                  <CinematicText weight="medium" className="text-sm">
+                    {provider.name}
+                  </CinematicText>
+                  <CinematicText className="text-white/50 text-xs">{provider.model}</CinematicText>
+                </div>
               </div>
-              <p className="text-xs text-gray-500">{provider.description}</p>
-            </CardContent>
-          </Card>
+              {isSelected && <div className="w-2 h-2 bg-white/60 rounded-full" />}
+            </div>
+            <CinematicText className="text-white/40 text-xs font-light">{provider.description}</CinematicText>
+          </GlassMorphism>
         )
       })}
     </div>

@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
 import { Eye, EyeOff, Key } from "lucide-react"
+import { GlassMorphism } from "./glass-morphism"
+import { CinematicText } from "./cinematic-text"
+import { MinimalInput } from "./minimal-input"
+import { MinimalButton } from "./minimal-button"
 
 interface ApiKeySettingsProps {
   onApiKeysChange: (keys: { groq?: string; gemini?: string; xai?: string }) => void
@@ -37,68 +37,65 @@ export function ApiKeySettings({ onApiKeysChange }: ApiKeySettingsProps) {
   const providers = [
     {
       id: "groq" as keyof typeof apiKeys,
-      name: "Groq API Key",
+      name: "Groq",
       placeholder: "gsk_...",
-      description: "Get your key from console.groq.com",
+      description: "console.groq.com",
     },
     {
       id: "gemini" as keyof typeof apiKeys,
-      name: "Gemini API Key",
+      name: "Gemini",
       placeholder: "AIza...",
-      description: "Get your key from makersuite.google.com",
+      description: "makersuite.google.com",
     },
     {
       id: "xai" as keyof typeof apiKeys,
-      name: "xAI API Key",
+      name: "xAI",
       placeholder: "xai-...",
-      description: "Get your key from console.x.ai",
+      description: "console.x.ai",
     },
   ]
 
   return (
-    <Card className="mb-4">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm">
-          <Key className="h-4 w-4" />
-          API Key Settings
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <GlassMorphism intensity="subtle" className="p-6">
+      <div className="flex items-center gap-3 mb-8">
+        <Key className="h-5 w-5 text-white/60" />
+        <CinematicText variant="subtitle" weight="medium">
+          API Configuration
+        </CinematicText>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {providers.map((provider) => (
-          <div key={provider.id} className="space-y-2">
-            <Label htmlFor={provider.id} className="text-sm font-medium">
-              {provider.name}
-            </Label>
+          <div key={provider.id} className="space-y-4">
             <div className="relative">
-              <Input
-                id={provider.id}
+              <MinimalInput
                 type={showKeys[provider.id] ? "text" : "password"}
                 placeholder={provider.placeholder}
                 value={apiKeys[provider.id]}
                 onChange={(e) => handleKeyChange(provider.id, e.target.value)}
-                className="pr-10"
+                label={provider.name}
+                className="pr-12"
               />
-              <Button
+              <MinimalButton
                 type="button"
-                variant="ghost"
+                variant="minimal"
                 size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                className="absolute right-0 top-4 p-2"
                 onClick={() => toggleShowKey(provider.id)}
               >
                 {showKeys[provider.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
+              </MinimalButton>
             </div>
-            <p className="text-xs text-gray-500">{provider.description}</p>
+            <CinematicText className="text-white/40 text-xs">{provider.description}</CinematicText>
           </div>
         ))}
+      </div>
 
-        <div className="pt-2 border-t">
-          <p className="text-xs text-gray-600">
-            💡 <strong>Tip:</strong> API keys are stored locally in your browser and never sent to our servers. They're
-            only used to make direct API calls to the respective providers.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="pt-6 mt-6 border-t border-white/10">
+        <CinematicText className="text-white/50 text-xs font-light">
+          API keys are stored locally and never transmitted to our servers.
+        </CinematicText>
+      </div>
+    </GlassMorphism>
   )
 }
