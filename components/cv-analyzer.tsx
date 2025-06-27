@@ -7,6 +7,9 @@ import { Upload, FileText, Download, CheckCircle, AlertTriangle, TrendingUp, Eye
 import { AdvancedGlass } from "./advanced-glass"
 import { PremiumButton } from "./premium-button"
 import { CinematicText } from "./cinematic-text"
+import dynamic from "next/dynamic"
+
+const PdfTextExtractor = dynamic(() => import("./PdfTextExtractor"), { ssr: false })
 
 interface CVAnalysisResult {
   overallScore: number
@@ -35,6 +38,7 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisResult, setAnalysisResult] = useState<CVAnalysisResult | null>(null)
   const [dragActive, setDragActive] = useState(false)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDrag = (e: React.DragEvent) => {
@@ -66,80 +70,41 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
     }
   }
 
-  const analyzeCV = async () => {
-    if (!file) return
-
+  const handleExtract = async (cvText: string) => {
     setIsAnalyzing(true)
-
-    // Simulate AI analysis with realistic delay
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-
-    // Mock analysis result - in real implementation, this would call your AI API
-    const mockResult: CVAnalysisResult = {
-      overallScore: 78,
-      sections: [
-        {
-          name: "Contact Information",
-          score: 95,
-          feedback: "Complete and professional contact details",
-          suggestions: ["Consider adding LinkedIn profile", "Add portfolio website if applicable"],
-          status: "excellent",
-        },
-        {
-          name: "Professional Summary",
-          score: 72,
-          feedback: "Good summary but could be more impactful",
-          suggestions: [
-            "Include specific achievements with numbers",
-            "Highlight unique value proposition",
-            "Tailor to target role",
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cvText,
+          messages: [
+            {
+              role: "system",
+              content: `You are a professional CV analyzer. Analyze the provided CV text and provide actionable feedback, section analysis, keyword suggestions, and recommendations for improvement. Be concise, clear, and helpful.\n\nCV Content:\n${cvText}`,
+            },
           ],
-          status: "good",
-        },
-        {
-          name: "Work Experience",
-          score: 85,
-          feedback: "Strong experience section with good detail",
-          suggestions: ["Add more quantified achievements", "Use stronger action verbs", "Include recent projects"],
-          status: "excellent",
-        },
-        {
-          name: "Skills",
-          score: 65,
-          feedback: "Skills section needs enhancement",
-          suggestions: [
-            "Add technical skills relevant to target role",
-            "Include proficiency levels",
-            "Separate technical and soft skills",
-          ],
-          status: "needs-improvement",
-        },
-        {
-          name: "Education",
-          score: 80,
-          feedback: "Education section is well-structured",
-          suggestions: ["Add relevant coursework", "Include GPA if strong", "Add certifications"],
-          status: "good",
-        },
-      ],
-      keywords: {
-        found: ["Project Management", "Leadership", "Data Analysis", "Team Collaboration"],
-        missing: ["Agile", "Scrum", "Digital Marketing", "Customer Success"],
-        suggestions: ["AI/ML", "Cloud Computing", "Strategic Planning", "Process Improvement"],
-      },
-      atsCompatibility: 82,
-      recommendations: [
-        "Optimize for ATS by using standard section headings",
-        "Include more industry-specific keywords",
-        "Quantify achievements with specific metrics",
-        "Tailor content to match job descriptions",
-        "Improve formatting for better readability",
-      ],
+        }),
+      })
+      if (!res.ok) throw new Error("Failed to analyze CV")
+      const { result } = await res.json()
+      setAnalysisResult({
+        overallScore: 0,
+        sections: [],
+        keywords: { found: [], missing: [], suggestions: [] },
+        atsCompatibility: 0,
+        recommendations: [result.output || result],
+      })
+      onAnalysisComplete?.(result)
+    } catch (err) {
+      setAnalysisResult(null)
+      alert("Error analyzing CV: " + (err as Error).message)
     }
-
-    setAnalysisResult(mockResult)
     setIsAnalyzing(false)
-    onAnalysisComplete?.(mockResult)
+  }
+
+  const analyzeCV = () => {
+    if (file) setPendingFile(file)
   }
 
   const getScoreColor = (score: number) => {
@@ -165,6 +130,16 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
 
   return (
     <div className="space-y-8">
+      {pendingFile && (
+        <PdfTextExtractor
+          file={pendingFile}
+          onExtract={async (cvText: string) => {
+            setPendingFile(null)
+            await handleExtract(cvText)
+          }}
+        />
+      )}
+
       {/* Upload Section */}
       {!analysisResult && (
         <AdvancedGlass variant="card" blur="xl" opacity="medium" className="p-8">
