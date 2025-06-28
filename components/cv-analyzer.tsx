@@ -35,6 +35,7 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisResult, setAnalysisResult] = useState<CVAnalysisResult | null>(null)
   const [dragActive, setDragActive] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDrag = (e: React.DragEvent) => {
@@ -70,76 +71,29 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
     if (!file) return
 
     setIsAnalyzing(true)
+    setError(null)
 
-    // Simulate AI analysis with realistic delay
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
 
-    // Mock analysis result - in real implementation, this would call your AI API
-    const mockResult: CVAnalysisResult = {
-      overallScore: 78,
-      sections: [
-        {
-          name: "Contact Information",
-          score: 95,
-          feedback: "Complete and professional contact details",
-          suggestions: ["Consider adding LinkedIn profile", "Add portfolio website if applicable"],
-          status: "excellent",
-        },
-        {
-          name: "Professional Summary",
-          score: 72,
-          feedback: "Good summary but could be more impactful",
-          suggestions: [
-            "Include specific achievements with numbers",
-            "Highlight unique value proposition",
-            "Tailor to target role",
-          ],
-          status: "good",
-        },
-        {
-          name: "Work Experience",
-          score: 85,
-          feedback: "Strong experience section with good detail",
-          suggestions: ["Add more quantified achievements", "Use stronger action verbs", "Include recent projects"],
-          status: "excellent",
-        },
-        {
-          name: "Skills",
-          score: 65,
-          feedback: "Skills section needs enhancement",
-          suggestions: [
-            "Add technical skills relevant to target role",
-            "Include proficiency levels",
-            "Separate technical and soft skills",
-          ],
-          status: "needs-improvement",
-        },
-        {
-          name: "Education",
-          score: 80,
-          feedback: "Education section is well-structured",
-          suggestions: ["Add relevant coursework", "Include GPA if strong", "Add certifications"],
-          status: "good",
-        },
-      ],
-      keywords: {
-        found: ["Project Management", "Leadership", "Data Analysis", "Team Collaboration"],
-        missing: ["Agile", "Scrum", "Digital Marketing", "Customer Success"],
-        suggestions: ["AI/ML", "Cloud Computing", "Strategic Planning", "Process Improvement"],
-      },
-      atsCompatibility: 82,
-      recommendations: [
-        "Optimize for ATS by using standard section headings",
-        "Include more industry-specific keywords",
-        "Quantify achievements with specific metrics",
-        "Tailor content to match job descriptions",
-        "Improve formatting for better readability",
-      ],
+      const response = await fetch("/api/cv-analyze", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to analyze CV. Please try again.")
+      }
+
+      const result: CVAnalysisResult = await response.json()
+      setAnalysisResult(result)
+      onAnalysisComplete?.(result)
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.")
+    } finally {
+      setIsAnalyzing(false)
     }
-
-    setAnalysisResult(mockResult)
-    setIsAnalyzing(false)
-    onAnalysisComplete?.(mockResult)
   }
 
   const getScoreColor = (score: number) => {
@@ -245,6 +199,10 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
                 <Upload className="ml-2 h-5 w-5" />
               </PremiumButton>
             </div>
+
+            {error && (
+              <div className="text-red-400 text-sm font-medium mb-4">{error}</div>
+            )}
           </div>
         </AdvancedGlass>
       )}
