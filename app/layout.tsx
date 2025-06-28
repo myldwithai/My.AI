@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import Image from "next/image"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -63,6 +64,9 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white min-h-screen antialiased`}
       >
+        <header className="w-full flex items-center justify-center py-6">
+          <Image src="/theworkapp-logo.png" alt="TheWorkapp Logo" width={180} height={48} priority />
+        </header>
         {children}
       </body>
     </html>

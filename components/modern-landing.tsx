@@ -19,6 +19,7 @@ import {
   Twitter,
   Facebook,
 } from "lucide-react"
+import Image from "next/image"
 
 interface ModernLandingProps {
   onGetStarted: () => void
@@ -133,6 +134,9 @@ export function ModernLanding({ onGetStarted }: ModernLandingProps) {
 
   return (
     <div className="min-h-screen bg-white">
+      <header className="w-full flex items-center justify-center py-8">
+        <Image src="/theworkapp-logo.png" alt="TheWorkapp Logo" width={180} height={48} priority />
+      </header>
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

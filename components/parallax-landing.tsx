@@ -23,6 +23,7 @@ import {
   Shield,
   Clock,
 } from "lucide-react"
+import Image from "next/image"
 
 interface ParallaxLandingProps {
   onGetStarted: () => void
@@ -206,7 +207,11 @@ export function ParallaxLanding({ onGetStarted }: ParallaxLandingProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col">
+      <header className="w-full flex items-center justify-center py-8">
+        <Image src="/theworkapp-logo.png" alt="TheWorkapp Logo" width={180} height={48} priority />
+      </header>
+
       {/* Parallax Background Elements */}
       <div className="fixed inset-0 pointer-events-none">
         <div
