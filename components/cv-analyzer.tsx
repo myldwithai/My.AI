@@ -289,7 +289,7 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
                 <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center">
                   <div className="text-center">
                     <TrendingUp className="h-12 w-12 text-blue-400 mx-auto mb-2" />
-                    <span className="text-3xl font-bold text-blue-400">{analysisResult.keywords.found.length}</span>
+                    <span className="text-3xl font-bold text-blue-400">{analysisResult.keywords?.found?.length ?? 0}</span>
                     <div className="text-sm text-blue-300">Keywords Found</div>
                   </div>
                 </div>
@@ -347,10 +347,10 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
               <div>
                 <CinematicText weight="medium" className="text-green-400 mb-4 flex items-center">
                   <CheckCircle className="h-5 w-5 mr-2" />
-                  Found Keywords ({analysisResult.keywords.found.length})
+                  Found Keywords ({analysisResult.keywords?.found?.length ?? 0})
                 </CinematicText>
                 <div className="flex flex-wrap gap-2">
-                  {analysisResult.keywords.found.map((keyword, index) => (
+                  {(analysisResult.keywords?.found ?? []).map((keyword, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm border border-green-400/30"
@@ -364,10 +364,10 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
               <div>
                 <CinematicText weight="medium" className="text-red-400 mb-4 flex items-center">
                   <AlertTriangle className="h-5 w-5 mr-2" />
-                  Missing Keywords ({analysisResult.keywords.missing.length})
+                  Missing Keywords ({analysisResult.keywords?.missing?.length ?? 0})
                 </CinematicText>
                 <div className="flex flex-wrap gap-2">
-                  {analysisResult.keywords.missing.map((keyword, index) => (
+                  {(analysisResult.keywords?.missing ?? []).map((keyword, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-sm border border-red-400/30"
@@ -381,10 +381,10 @@ export function CVAnalyzer({ onAnalysisComplete }: CVAnalyzerProps) {
               <div>
                 <CinematicText weight="medium" className="text-blue-400 mb-4 flex items-center">
                   <TrendingUp className="h-5 w-5 mr-2" />
-                  Suggested Keywords ({analysisResult.keywords.suggestions.length})
+                  Suggested Keywords ({analysisResult.keywords?.suggestions?.length ?? 0})
                 </CinematicText>
                 <div className="flex flex-wrap gap-2">
-                  {analysisResult.keywords.suggestions.map((keyword, index) => (
+                  {(analysisResult.keywords?.suggestions ?? []).map((keyword, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm border border-blue-400/30"

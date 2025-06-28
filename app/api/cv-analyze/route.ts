@@ -29,7 +29,18 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await xaiRes.json()
-    return NextResponse.json(result)
+    // Defensive: always return a complete shape
+    return NextResponse.json({
+      overallScore: result.overallScore ?? 0,
+      sections: result.sections ?? [],
+      keywords: {
+        found: result.keywords?.found ?? [],
+        missing: result.keywords?.missing ?? [],
+        suggestions: result.keywords?.suggestions ?? [],
+      },
+      atsCompatibility: result.atsCompatibility ?? 0,
+      recommendations: result.recommendations ?? [],
+    })
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 })
   }
