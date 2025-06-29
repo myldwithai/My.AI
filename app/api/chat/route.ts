@@ -34,6 +34,9 @@ export async function POST(req: Request) {
     }
     messagesForAI = [...messagesForAI, ...messages]
 
+    // Log the final messages array sent to the AI model
+    console.log("Final messages array sent to AI model:", JSON.stringify(messagesForAI, null, 2))
+
     // Select the appropriate model based on provider
     let model
 
