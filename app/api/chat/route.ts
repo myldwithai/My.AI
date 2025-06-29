@@ -8,8 +8,8 @@ export const maxDuration = 30
 
 export async function POST(req: Request) {
   try {
-    // Extract the messages, provider, and custom API keys from the body
-    const { messages, provider = "groq", apiKeys = {} } = await req.json()
+    // Extract the messages, provider, custom API keys, and systemMessage from the body
+    const { messages, provider = "groq", apiKeys = {}, systemMessage } = await req.json()
 
     console.log(`🤖 Using provider: ${provider}`)
     console.log(`📝 Messages count: ${messages?.length || 0}`)
@@ -27,46 +27,37 @@ export async function POST(req: Request) {
       )
     }
 
+    // Prepare messages array for AI
+    let messagesForAI = []
+    if (systemMessage) {
+      messagesForAI.push({ role: 'system', content: systemMessage })
+    }
+    messagesForAI = [...messagesForAI, ...messages]
+
     // Select the appropriate model based on provider
     let model
-    let apiKey
 
     switch (provider) {
       case "groq":
-        apiKey = apiKeys.groq || process.env.GROQ_API_KEY
-        if (!apiKey) {
-          throw new Error("Groq API key is required")
-        }
-        model = groq("llama-3.1-8b-instant", { apiKey })
+        model = groq("llama-3.1-8b-instant")
         break
 
       case "gemini":
-        apiKey = apiKeys.gemini || process.env.GEMINI_API_KEY
-        if (!apiKey) {
-          throw new Error("Gemini API key is required")
-        }
-        model = google("gemini-1.5-flash", { apiKey })
+        model = google("gemini-1.5-flash")
         break
 
       case "xai":
-        apiKey = apiKeys.xai || process.env.XAI_API_KEY
-        if (!apiKey) {
-          throw new Error("xAI API key is required")
-        }
-        model = xai("grok-3", { apiKey })
+        model = xai("grok-3")
         break
 
       default:
         throw new Error(`Unsupported provider: ${provider}`)
     }
 
-    console.log(`🔑 API key found: ${apiKey ? "Yes" : "No"}`)
-
     // Call the language model
     const result = streamText({
       model,
-      messages,
-      system: `You are a helpful AI assistant powered by ${provider.toUpperCase()}. Be concise, friendly, and informative in your responses. Provide clear and accurate information while maintaining a conversational tone.`,
+      messages: messagesForAI,
     })
 
     console.log(`✅ Stream created successfully`)

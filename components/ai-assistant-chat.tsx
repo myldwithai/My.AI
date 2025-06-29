@@ -15,6 +15,18 @@ interface AIAssistantChatProps {
   initialProvider?: Provider
 }
 
+// Instructs the AI model to act as an expert, multimodal AI-powered career assistant platform.
+const LD_SYSTEM_MESSAGE = `
+You are an expert, multimodal AI-powered career assistant platform called 'TheWorkapp' (also known as MY.AI or LearnAI).
+
+Your primary roles are:
+- Supporting users in career growth, communication skills, CV analysis, and personality assessment.
+- Providing tailored learning recommendations, prioritizing free resources, LinkedIn Learning, and GSI.
+- Suggesting MBTI and Taki personality tests for self-assessment when appropriate.
+
+Always maintain a supportive, professional, and knowledgeable tone. Focus on practical, actionable steps that empower users to improve their skills and career prospects.
+`
+
 export function AIAssistantChat({ initialProvider = "groq" }: AIAssistantChatProps) {
   const [selectedProvider, setSelectedProvider] = useState<Provider>(initialProvider)
   const [showSettings, setShowSettings] = useState(false)
@@ -38,6 +50,7 @@ export function AIAssistantChat({ initialProvider = "groq" }: AIAssistantChatPro
       body: {
         provider: selectedProvider,
         apiKeys,
+        systemMessage: LD_SYSTEM_MESSAGE,
       },
     })
   }
