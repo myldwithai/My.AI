@@ -28,31 +28,48 @@ export async function POST(req: Request) {
     }
 
     // Prepare messages array for AI
-    let messagesForAI = []
-    if (systemMessage) {
-      messagesForAI.push({ role: 'system', content: systemMessage })
+    let messagesForAI: any[] = []
+    let useSystemInstruction = false
+    let systemInstruction: string | undefined = undefined
+
+    switch (provider) {
+      case "groq":
+      case "xai":
+        if (systemMessage) {
+          messagesForAI.push({ role: 'system', content: systemMessage })
+        }
+        messagesForAI = [...messagesForAI, ...messages]
+        break
+      case "gemini":
+        // For Gemini, do NOT prepend system message; use systemInstruction param
+        messagesForAI = [...messages]
+        if (systemMessage) {
+          useSystemInstruction = true
+          systemInstruction = systemMessage
+        }
+        break
+      default:
+        throw new Error(`Unsupported provider: ${provider}`)
     }
-    messagesForAI = [...messagesForAI, ...messages]
 
     // Log the final messages array sent to the AI model
     console.log("Final messages array sent to AI model:", JSON.stringify(messagesForAI, null, 2))
+    if (useSystemInstruction) {
+      console.log("System instruction for Gemini:", systemInstruction)
+    }
 
     // Select the appropriate model based on provider
     let model
-
     switch (provider) {
       case "groq":
         model = groq("llama-3.1-8b-instant")
         break
-
       case "gemini":
         model = google("gemini-1.5-flash")
         break
-
       case "xai":
         model = xai("grok-3")
         break
-
       default:
         throw new Error(`Unsupported provider: ${provider}`)
     }
@@ -61,6 +78,7 @@ export async function POST(req: Request) {
     const result = streamText({
       model,
       messages: messagesForAI,
+      ...(useSystemInstruction && systemInstruction ? { systemInstruction } : {}),
     })
 
     console.log(`✅ Stream created successfully`)
