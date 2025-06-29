@@ -144,10 +144,8 @@ export function ModernLanding({ onGetStarted }: ModernLandingProps) {
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                  <Brain className="h-6 w-6 text-white" />
-                </div>
-                <span className="ml-3 text-xl font-bold text-gray-900">LearnAI</span>
+                <Image src="/theworkapp-logo-blue----.jpg" alt="TheWorkapp Logo" width={40} height={40} priority />
+                <span className="ml-3 text-xl font-bold text-gray-900">TheWorkapp</span>
               </div>
             </div>
 
@@ -504,10 +502,8 @@ export function ModernLanding({ onGetStarted }: ModernLandingProps) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Brain className="h-5 w-5 text-white" />
-                </div>
-                <span className="ml-2 text-xl font-bold">LearnAI</span>
+                <Image src="/theworkapp-logo-blue----.jpg" alt="TheWorkapp Logo" width={32} height={32} priority />
+                <span className="ml-2 text-xl font-bold">TheWorkapp</span>
               </div>
               <p className="text-gray-400 mb-4">
                 Transforming workforce development with AI-powered learning solutions.

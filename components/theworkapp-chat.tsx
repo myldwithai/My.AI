@@ -5,7 +5,6 @@ import { useChat } from "ai/react"
 import { useState, useRef, useEffect } from "react"
 import {
   Send,
-  Bot,
   User,
   Settings,
   ArrowRight,
@@ -22,6 +21,7 @@ import { GlassInput } from "./glass-input"
 import { CinematicText } from "./cinematic-text"
 import { ProviderSelector, type Provider } from "./provider-selector"
 import { ApiKeySettings } from "./api-key-settings"
+import Image from "next/image"
 
 interface TheWorkappChatProps {
   onBackToLanding: () => void
@@ -157,7 +157,7 @@ export function TheWorkappChat({ onBackToLanding }: TheWorkappChatProps) {
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-600/30 rounded-2xl blur-lg" />
                   <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-xl border border-blue-400/30 flex items-center justify-center">
-                    <Bot className="h-7 w-7 text-blue-400" />
+                    <Image src="/theworkapp-logo-blue----.jpg" alt="TheWorkapp Logo" width={56} height={56} priority />
                   </div>
                 </div>
                 <div>
@@ -336,7 +336,7 @@ export function TheWorkappChat({ onBackToLanding }: TheWorkappChatProps) {
                           {message.role === "user" ? (
                             <User className="h-5 w-5 text-blue-300" />
                           ) : (
-                            <Bot className="h-5 w-5 text-blue-400" />
+                            <Image src="/theworkapp-logo-blue----.jpg" alt="TheWorkapp Logo" width={20} height={20} priority />
                           )}
                         </AdvancedGlass>
 
@@ -364,7 +364,7 @@ export function TheWorkappChat({ onBackToLanding }: TheWorkappChatProps) {
                           opacity="low"
                           className="flex-shrink-0 w-12 h-12 flex items-center justify-center border-blue-400/20"
                         >
-                          <Bot className="h-5 w-5 text-blue-400" />
+                          <Image src="/theworkapp-logo-blue----.jpg" alt="TheWorkapp Logo" width={20} height={20} priority />
                         </AdvancedGlass>
 
                         <AdvancedGlass
