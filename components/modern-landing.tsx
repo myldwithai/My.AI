@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import {
   Menu,
   X,
@@ -132,6 +133,19 @@ export function ModernLanding({ onGetStarted }: ModernLandingProps) {
     },
   ]
 
+  // Framer Motion variants for staggered features
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 },
+    },
+  }
+  const itemVariants = {
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0 },
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <header className="w-full flex items-center justify-center py-8">
@@ -243,13 +257,25 @@ export function ModernLanding({ onGetStarted }: ModernLandingProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              <motion.h1
+                className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.8 }}
+              >
                 Transform Your Team's Learning with <span className="text-blue-600">AI-Powered Development</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              </motion.h1>
+              <motion.p
+                className="text-xl text-gray-600 mb-8 leading-relaxed"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
                 The first AI-driven learning platform designed specifically for modern workforce development starting at
                 just <span className="font-semibold text-blue-600">$99/month</span>
-              </p>
+              </motion.p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <button
                   onClick={onGetStarted}
@@ -332,17 +358,29 @@ export function ModernLanding({ onGetStarted }: ModernLandingProps) {
               Everything you need to create, deliver, and track effective learning experiences for your team.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+          >
             {features.map((feature, index) => (
-              <div key={index} className="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow">
+              <motion.div
+                key={index}
+                className="bg-white rounded-xl p-8 shadow-sm"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
                   <feature.icon className="h-6 w-6 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">{feature.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
